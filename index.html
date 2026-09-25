@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Para Ti ❤️</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Playfair Display & Poppins -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --bg-deep-red: #2b080c;
+            --primary-red: #800e13;
+            --rose-accent: #ad2831;
+            --pink-soft: #ffccd5;
+            --pink-light: #fff0f3;
+            --pink-muted: #ffb3c1;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-deep-red);
+            color: var(--pink-light);
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        .font-serif-title {
+            font-family: 'Playfair Display', serif;
+        }
+
+        /* Minimal ambient background gradient */
+        .ambient-glow {
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(173, 40, 49, 0.25) 0%, rgba(43, 8, 12, 0) 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 0;
+            filter: blur(40px);
+        }
+
+        /* Glassmorphism Refined */
+        .glass-minimal {
+            background: rgba(128, 14, 19, 0.25);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 204, 213, 0.15);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        /* Redesigned Minimalist Matte Envelope */
+        .envelope-container {
+            perspective: 1000px;
+        }
+
+        .envelope-matte {
+            width: 320px;
+            height: 220px;
+            background-color: #590d11;
+            border-radius: 12px;
+            position: relative;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 0 0 15px rgba(255, 204, 213, 0.05);
+            cursor: pointer;
+            transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.5s ease;
+            transform-style: preserve-3d;
+            border: 1px solid rgba(255, 204, 213, 0.1);
+        }
+
+        @media (min-width: 640px) {
+            .envelope-matte {
+                width: 400px;
+                height: 260px;
+            }
+        }
+
+        .envelope-matte:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.6), 0 0 25px rgba(255, 204, 213, 0.15);
+        }
+
+        /* Flap animation */
+        .flap-top {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 50%;
+            background-color: #6a0f14;
+            clip-path: polygon(0 0, 100% 0, 50% 100%);
+            transform-origin: top center;
+            transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1), z-index 0.1s 0.35s;
+            z-index: 5;
+            border-top-left-radius: 12px;
+            border-top-right-radius: 12px;
+        }
+
+        .envelope-matte.open .flap-top {
+            transform: rotateX(180deg);
+            z-index: 1;
+        }
+
+        /* Inner envelope pockets */
+        .pocket-base {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 12px;
+            overflow: hidden;
+            z-index: 3;
+            pointer-events: none;
+        }
+
+        .pocket-sides {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #42080c 0%, #590d11 100%);
+            clip-path: polygon(0 0, 50% 50%, 100% 0, 100% 100%, 0 100%);
+        }
+
+        /* Minimalist Seal */
+        .minimal-seal {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 46px;
+            height: 46px;
+            background: #800e13;
+            border: 1px solid rgba(255, 204, 213, 0.3);
+            border-radius: 50%;
+            z-index: 6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--pink-soft);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+            transition: transform 0.4s ease, opacity 0.4s ease;
+        }
+
+        .envelope-matte.open .minimal-seal {
+            transform: translate(-50%, -120%) scale(0);
+            opacity: 0;
+        }
+
+        /* Inner Preview Card */
+        .preview-card {
+            position: absolute;
+            bottom: 12px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 88%;
+            height: 82%;
+            background: var(--pink-light);
+            border-radius: 8px;
+            z-index: 2;
+            transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .envelope-matte.open .preview-card {
+            transform: translateX(-50%) translateY(-110px);
+            z-index: 4;
+        }
+
+        /* Modern Card Parchment Replacement */
+        .modern-card {
+            background: #fff5f7;
+            border: 1px solid rgba(255, 204, 213, 0.6);
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5), 0 0 40px rgba(255, 204, 213, 0.1);
+        }
+
+        /* Falling Items Minimalist */
+        .waterfall-element {
+            position: fixed;
+            top: -50px;
+            pointer-events: none;
+            z-index: 40;
+            user-select: none;
+            will-change: transform, opacity;
+            animation: fallAnimation linear forwards;
+        }
+
+        @keyframes fallAnimation {
+            0% {
+                transform: translateY(0) rotate(0deg) scale(0.9);
+                opacity: 0;
+            }
+            15% {
+                opacity: var(--target-opacity, 0.85);
+            }
+            85% {
+                opacity: var(--target-opacity, 0.85);
+            }
+            100% {
+                transform: translateY(105vh) rotate(var(--target-rotation, 180deg)) scale(1);
+                opacity: 0;
+            }
+        }
+
+        /* Custom minimal scrollbar */
+        .custom-scroll::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scroll::-webkit-scrollbar-track {
+            background: rgba(128, 14, 19, 0.05);
+        }
+        .custom-scroll::-webkit-scrollbar-thumb {
+            background: rgba(128, 14, 19, 0.2);
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body class="flex flex-col justify-between min-h-screen relative selection:bg-rose-900 selection:text-pink-100">
+
+    <!-- Background Audio from GitHub Raw -->
+    <audio id="bgAudio" loop preload="auto">
+        <source src="https://github.com/EndersonSivira/Poema-y-cascada/raw/main/wwd.mp3juice.blog%20-%20JVKE%20-%20golden%20hour%20(320%20KBps).mp3" type="audio/mpeg">
+    </audio>
+
+    <div class="ambient-glow top-0 left-1/4"></div>
+    <div class="ambient-glow bottom-0 right-1/4"></div>
+
+    <header class="w-full p-6 z-20 flex justify-between items-center max-w-4xl mx-auto">
+        <div class="flex items-center space-x-3">
+            <span class="w-2 h-2 rounded-full bg-rose-500 animate-ping"></span>
+            <span class="font-serif-title italic text-lg text-pink-200 tracking-wide">Para Ti</span>
+        </div>
+    </header>
+
+    <main class="flex-grow flex items-center justify-center p-4 relative z-10 my-auto">
+
+        <!-- STAGE 1: MINIMAL ENVELOPE -->
+        <div id="stageEnvelope" class="flex flex-col items-center justify-center space-y-8 transition-all duration-700 w-full max-w-md">
+            
+            <div class="text-center space-y-2">
+                <h1 class="text-3xl sm:text-4xl font-serif-title text-pink-100 font-light tracking-wide">
+                    Una nota especial, para alguien aun mas especial
+                </h1>
+                <p class="text-xs sm:text-sm text-pink-300/70 font-light tracking-wider uppercase">
+                    Toca el sobre para abrir
+                </p>
+            </div>
+
+            <!-- Envelope Component -->
+            <div class="envelope-container my-4" onclick="handleOpenEnvelope()">
+                <div id="envelope" class="envelope-matte">
+                    <div class="flap-top"></div>
+                    <div class="minimal-seal">
+                        <i class="fa-solid fa-heart text-sm"></i>
+                    </div>
+
+                    <div class="preview-card text-center">
+                        <span class="text-xs uppercase tracking-widest text-rose-900/60 font-medium mb-1">Poema</span>
+                        <div class="w-6 h-[1px] bg-rose-900/20 my-1 mx-auto"></div>
+                        <p class="font-serif-title text-base italic text-rose-950 font-normal">Para mi solecito</p>
+                    </div>
+
+                    <div class="pocket-base">
+                        <div class="pocket-sides"></div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- STAGE 2: ELEGANT MINIMAL POEM CARD -->
+        <div id="stagePoem" class="hidden opacity-0 transform translate-y-8 transition-all duration-700 w-full max-w-xl">
+            <div class="modern-card rounded-2xl p-8 sm:p-12 relative text-rose-950 shadow-2xl">
+                
+                <div class="text-center mb-8 border-b border-rose-900/10 pb-6">
+                    <span class="text-[10px] tracking-widest uppercase text-rose-800/60 font-semibold block mb-1">Como la primera web que te hice</span>
+                    <h2 class="text-3xl sm:text-4xl font-serif-title italic font-normal text-rose-950">
+                        Eres Mi Universo
+                    </h2>
+                </div>
+
+                <!-- Poem Text -->
+                <div class="custom-scroll max-h-[50vh] overflow-y-auto px-2 sm:px-4 space-y-6 font-serif-title text-base sm:text-lg italic leading-relaxed text-rose-900 text-center">
+                    <p>
+                        Bajo el mismo cielo de esta ciudad, 
+                      un romance se escribe sin prisa ni guion, como esa historia 
+                      que ves maratonear y que, poco a poco, me robó el corazón.
+                    </p>
+                    
+                    <p>
+                        No hizo falta un hechizo ni una invocación para que te
+                      volvieras mi persona favorita; tu risa tiene más luz que 
+                      cualquier animación, y tu presencia, la magia que todo lo levanta.
+                    </p>
+
+                    <p>
+                        Entre referencias, debates y risas compartidas, fuiste pasando de amiga
+                      a algo mucho más: el capítulo preferido de todas mis días, el relleno bonito
+                      que no quiero saltar jamás.
+                    </p>
+                  
+                    <p>
+                      Aún no le ponemos el título oficial, pero este sentimiento no
+                      necesita traducción: eres mi escena principal, 
+                      y la protagonista de toda mi atención.
+                    </p>
+                </div>
+
+                <!-- Footer / Next Stage Button -->
+                <div class="mt-8 pt-6 border-t border-rose-900/10 flex flex-col sm:flex-row justify-between items-center gap-4">
+                    <div class="text-center sm:text-left">
+                        <span class="font-serif-title italic text-base text-rose-900 block">Con todo el amor</span>
+                        <span class="text-[10px] uppercase tracking-wider text-rose-700/60">de el que no te abraza por tener penita</span>
+                    </div>
+
+                    <button onclick="transitionToWaterfall()" class="bg-rose-900 hover:bg-rose-950 text-pink-100 px-6 py-3 rounded-full text-xs uppercase tracking-widest font-light transition duration-300 shadow-md flex items-center space-x-2">
+                        <span>Descubrir lo que siento</span>
+                        <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                    </button>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- STAGE 3: MINIMAL WATERFALL & LOVE DISPLAY -->
+        <div id="stageWaterfall" class="hidden opacity-0 transition-all duration-1000 w-full max-w-xl flex flex-col items-center text-center space-y-6 z-20">
+            
+            <div class="glass-minimal rounded-3xl p-8 sm:p-12 border border-pink-300/10 shadow-2xl relative w-full">
+                
+                <span class="text-[10px] uppercase tracking-widest text-pink-300/70 font-semibold block mb-3">Como la barrera de Gojo</span>
+                
+                <h2 class="text-3xl sm:text-5xl font-serif-title italic text-pink-100 font-normal mb-4">
+                    Eres Infinitamente Indispensable En Mi Vida
+                </h2>
+
+                <p class="text-xs sm:text-sm text-pink-200/70 font-light leading-relaxed max-w-md mx-auto mb-8">
+                    Cada palabra que flota a tu alrededor es sólo un pequeño reflejo del inmenso amor que me inspiras día a día.
+                </p>
+
+                <!-- Action Controls -->
+                <div class="flex flex-wrap justify-center gap-4">
+                    <button onclick="triggerLoveBurst()" class="bg-rose-900 hover:bg-rose-800 text-pink-100 px-6 py-3 rounded-full text-xs uppercase tracking-widest font-light border border-pink-300/20 transition duration-300 shadow-lg flex items-center space-x-2">
+                        <i class="fa-solid fa-heart text-pink-300 text-xs"></i>
+                        <span>Más amor 🌸</span>
+                    </button>
+
+                    <button onclick="returnToPoem()" class="glass-minimal text-pink-200 hover:text-white px-6 py-3 rounded-full text-xs uppercase tracking-widest font-light transition duration-300 border border-white/10">
+                        <span>Releer poema</span>
+                    </button>
+                </div>
+
+            </div>
+
+            <p class="text-[11px] text-pink-300/50 font-light tracking-wider">
+                
+            </p>
+
+        </div>
+
+    </main>
+
+    <footer class="w-full p-6 text-center text-[10px] text-pink-300/30 uppercase tracking-widest z-20">
+        
+    </footer>
+
+    <script>
+        // Data arrays for waterfall elements
+        const phrases = [
+            "Te Amo ❤️", "Me Gustas 🌸", "Te Quiero 💕", "Eres lo Mejor ✨",
+            "Mi Lugar Favorito 🏰", "Eres Mágica 🌌", "Mi Vida 💗", "Mi Tesoro 💎",
+            "Siempre Juntos ♾️", "Hermosa 🌺", "Mi Sol ☀️", "Mi Alegría 🥰"
+        ];
+
+        const symbols = ["❤️", "🌹", "🌸", "🌺", "✨", "💕", "🤍"];
+
+        // Configuración de tiempo inicial en segundos para el audio
+        const START_TIME = 29; 
+
+        let waterfallActive = false;
+        let waterfallTimer = null;
+
+        const bgAudio = document.getElementById('bgAudio');
+        let audioStarted = false;
+
+        function startAudio() {
+            if (!audioStarted && bgAudio) {
+                // Establecer el segundo de inicio antes o durante la reproducción
+                bgAudio.currentTime = START_TIME;
+                
+                bgAudio.play().then(() => {
+                    audioStarted = true;
+                }).catch(err => {
+                    console.log("Autoplay bloqueado o esperando interacción:", err);
+                });
+            }
+        }
+
+        // Global click listener to unlock autoplay immediately on first tap/click anywhere
+        document.addEventListener('click', startAudio, { once: true });
+        document.addEventListener('touchstart', startAudio, { once: true });
+
+        function handleOpenEnvelope() {
+            startAudio();
+            const envelope = document.getElementById('envelope');
+
+            envelope.classList.add('open');
+
+            setTimeout(() => {
+                const stage1 = document.getElementById('stageEnvelope');
+                const stage2 = document.getElementById('stagePoem');
+
+                stage1.style.opacity = '0';
+                stage1.style.transform = 'translateY(-15px)';
+
+                setTimeout(() => {
+                    stage1.classList.add('hidden');
+                    stage2.classList.remove('hidden');
+                    
+                    void stage2.offsetWidth;
+                    stage2.style.opacity = '1';
+                    stage2.style.transform = 'translateY(0)';
+                }, 500);
+            }, 800);
+        }
+
+        // Stage 2 -> Stage 3 (Waterfall)
+        function transitionToWaterfall() {
+            const stage2 = document.getElementById('stagePoem');
+            const stage3 = document.getElementById('stageWaterfall');
+
+            stage2.style.opacity = '0';
+            stage2.style.transform = 'translateY(-15px)';
+
+            setTimeout(() => {
+                stage2.classList.add('hidden');
+                stage3.classList.remove('hidden');
+
+                void stage3.offsetWidth;
+                stage3.style.opacity = '1';
+
+                waterfallActive = true;
+                startWaterfallEngine();
+                triggerLoveBurst();
+            }, 600);
+        }
+
+        // Stage 3 -> Stage 2 (Return)
+        function returnToPoem() {
+            const stage2 = document.getElementById('stagePoem');
+            const stage3 = document.getElementById('stageWaterfall');
+
+            stage3.style.opacity = '0';
+
+            setTimeout(() => {
+                stage3.classList.add('hidden');
+                stage2.classList.remove('hidden');
+
+                void stage2.offsetWidth;
+                stage2.style.opacity = '1';
+                stage2.style.transform = 'translateY(0)';
+            }, 500);
+        }
+
+        // Continuous Minimal Waterfall Engine
+        function startWaterfallEngine() {
+            if (waterfallTimer) clearInterval(waterfallTimer);
+
+            waterfallTimer = setInterval(() => {
+                if (!waterfallActive) return;
+                spawnFallingElement();
+            }, 300);
+        }
+
+        // Spawn Single Element (Phrase or Symbol)
+        function spawnFallingElement(xPosOverride = null, isFast = false) {
+            const item = document.createElement('div');
+            item.className = 'waterfall-element';
+
+            const isText = Math.random() > 0.5;
+
+            if (isText) {
+                const text = phrases[Math.floor(Math.random() * phrases.length)];
+                item.innerText = text;
+                item.style.fontFamily = "'Playfair Display', serif";
+                item.style.fontStyle = "italic";
+                item.style.fontSize = `${Math.floor(Math.random() * 6) + 14}px`; // 14px to 20px
+                item.style.color = "#ffccd5";
+                item.style.backgroundColor = "rgba(128, 14, 19, 0.4)";
+                item.style.padding = "4px 14px";
+                item.style.borderRadius = "50px";
+                item.style.border = "1px solid rgba(255, 204, 213, 0.15)";
+                item.style.backdropFilter = "blur(6px)";
+            } else {
+                const sym = symbols[Math.floor(Math.random() * symbols.length)];
+                item.innerText = sym;
+                item.style.fontSize = `${Math.floor(Math.random() * 12) + 16}px`;
+            }
+
+            const xPos = xPosOverride !== null ? xPosOverride : Math.random() * 92;
+            const duration = isFast ? (Math.random() * 2 + 3) : (Math.random() * 3 + 4.5);
+            const opacity = Math.random() * 0.4 + 0.55;
+            const rotation = (Math.random() - 0.5) * 180;
+
+            item.style.left = `${xPos}vw`;
+            item.style.animationDuration = `${duration}s`;
+            item.style.setProperty('--target-opacity', opacity);
+            item.style.setProperty('--target-rotation', `${rotation}deg`);
+
+            document.body.appendChild(item);
+
+            setTimeout(() => {
+                item.remove();
+            }, duration * 1000);
+        }
+
+        // Burst Explosion
+        function triggerLoveBurst() {
+            for (let i = 0; i < 25; i++) {
+                setTimeout(() => {
+                    spawnFallingElement(Math.random() * 92, true);
+                }, i * 60);
+            }
+        }
+
+        // Interactive Sparkles on Click
+        document.addEventListener('click', (e) => {
+            if (e.target.closest('button') || e.target.closest('.envelope-matte')) return;
+
+            const heart = document.createElement('div');
+            heart.className = 'fixed pointer-events-none z-50 text-rose-300 text-sm animate-ping';
+            heart.style.left = `${e.clientX - 8}px`;
+            heart.style.top = `${e.clientY - 8}px`;
+            
+            const icons = ['❤️', '✨', '🌹', '💕'];
+            heart.innerText = icons[Math.floor(Math.random() * icons.length)];
+
+            document.body.appendChild(heart);
+
+            setTimeout(() => heart.remove(), 700);
+        });
+    </script>
+</body>
+</html>
